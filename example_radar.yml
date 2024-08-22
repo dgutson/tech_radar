@@ -1,0 +1,58 @@
+---
+quadrants:
+  - LLM / GenAI
+  - Analysis Tools
+  - Programming Languages
+  - IaC
+
+categories:
+  - Adopt
+  - Trial
+  - Assess
+  - Hold
+
+technologies:
+  LLM / GenAI:
+    Adopt:
+    Trial:
+    Assess:
+      - chag-gpt
+      - claude
+    Hold:
+      - code-llama
+      - monocle
+
+  Analysis Tools:
+    Adopt:
+      - tool1
+      - tool2
+    Trial:
+      - tool3: outgoing
+    Assess:
+      - tool4: incoming
+      - tool5
+    Hold:
+      - tool6
+      - tool7
+
+  Programming Languages:
+    Adopt:
+      - python
+    Trial:
+      - codon
+      - cython
+    Assess:
+      - rust
+      - mojo
+    Hold:
+      - otherlang
+
+  IaC:
+    Adopt:
+      - terraform
+      - iac2
+    Trial:
+      - iac3
+      - iac4
+    Assess:
+      - iac5

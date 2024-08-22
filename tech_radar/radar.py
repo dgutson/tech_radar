@@ -25,6 +25,8 @@ import matplotlib.pyplot as plt
 from matplotlib.projections.polar import PolarAxes
 import numpy as np
 
+__VERSION__ : Final = '1.0.0'
+
 class Quadrants:
     def __init__(self, quadrants: int) -> None:
         self.quadrants : Final = quadrants
@@ -102,7 +104,7 @@ def get_tech_data(tech: dict[str,str] | str) -> tuple[str, str]:
             case 'outgoing':
                 symbol = 'v'
             case _:
-                print(f"Unknown tech status {tech_status}")
+                print(f"Unknown tech status {tech_status}, should be 'incoming' or 'outgoing'")
                 symbol = 'o'
         return tech_name, symbol
     return tech,'o'
@@ -125,45 +127,53 @@ def draw_techs(ax: PolarAxes, quadrants: list[str], categories: list[str], techn
                     ax.text(angle, radius, tech_name, ha='center', va='top')
                     tech_index += 1
 
-def create_tech_radar_from_yaml(yaml_data: dict, filename: str) -> None:
+def create_tech_radar_from_yaml(yaml_data: dict, filename: str) -> int:
     # Extract data from the YAML
     quadrants: Final = yaml_data['quadrants']
     categories: Final = yaml_data['categories']
     technologies_info: Final = yaml_data['technologies']
 
-    ax = draw_chart(categories, quadrants)
-    draw_techs(ax, quadrants, categories, technologies_info)
+    try:
+        ax = draw_chart(categories, quadrants)
+        draw_techs(ax, quadrants, categories, technologies_info)
 
-    # Save the file
-    file_extension = os.path.splitext(filename)[1][1:]
-    if file_extension == '':
-        file_extension = 'svg'
-        filename += '.svg'
+        # Save the file
+        file_extension = os.path.splitext(filename)[1][1:]
+        if file_extension == '':
+            file_extension = 'svg'
+            filename += '.svg'
 
-    plt.savefig(filename, format=file_extension)
-    plt.show()
+        plt.savefig(filename, format=file_extension)
+        plt.show()
+        return 0
+    except ValueError as e:
+        print(f"Element not found: {e}")
+        return 1
+
 
 # Load YAML and create the tech radar
-def load_yaml_and_create_tech_radar(yaml_file: str, output_file: str) -> None:
-    with open(yaml_file, 'r', encoding='UTF-8') as file:
-        yaml_data = yaml.safe_load(file)
-    create_tech_radar_from_yaml(yaml_data, output_file)
+def load_yaml_and_create_tech_radar(yaml_file: str, output_file: str) -> int:
+    try:
+        with open(yaml_file, 'r', encoding='UTF-8') as file:
+            yaml_data = yaml.safe_load(file)
+        return create_tech_radar_from_yaml(yaml_data, output_file)
+    except FileNotFoundError:
+        print(f"File not found: {yaml_file}")
+        return 1
 
-# Example usage
-#load_yaml_and_create_tech_radar('tech_radar.yaml')
-
-def main() -> None:
+def main() -> int:
     parser = argparse.ArgumentParser(description="Parse tech radar parameters.")
-    
+
     parser.add_argument('--size', type=int, default=12, help="Tech radar size")
     parser.add_argument('--min-radius', dest='min_radius', type=float, default=0.1, help="Minimum for random radius")
     parser.add_argument('--max-radius', dest='max_radius', type=float, default=0.9, help="Maximum for random radius")
     parser.add_argument('--input-yaml', dest='input_yaml', type=str, default='tech_radar.yml', help="Name of the input file")
     parser.add_argument('--output', type=str, default='tech_radar.svg', help="Name of the output file")
+    parser.add_argument('--version', action='version', version=f"%(prog)s {__VERSION__}")
 
     args = parser.parse_args()
 
-    load_yaml_and_create_tech_radar(yaml_file=args.input_yaml, output_file=args.output)
+    return load_yaml_and_create_tech_radar(yaml_file=args.input_yaml, output_file=args.output)
 
 if __name__ == "__main__":
     main()
