@@ -127,6 +127,20 @@ def draw_techs(ax: PolarAxes, quadrants: list[str], categories: list[str], techn
                     ax.text(angle, radius, tech_name, ha='center', va='top')
                     tech_index += 1
 
+def add_title(title_data: str | dict) -> None:
+    # defaults:
+    fontsize = 16
+    color = 'blue'
+    if isinstance(title_data, str):
+        title = title_data
+    else:
+        title = title_data['caption']
+        fontsize = title_data.get('fontsize', fontsize)
+        color = title_data.get('color', color)
+
+    plt.title(title, fontsize=fontsize, color=color)
+
+
 def create_tech_radar_from_yaml(yaml_data: dict, filename: str) -> int:
     # Extract data from the YAML
     quadrants: Final = yaml_data['quadrants']
@@ -143,6 +157,8 @@ def create_tech_radar_from_yaml(yaml_data: dict, filename: str) -> int:
             file_extension = 'svg'
             filename += '.svg'
 
+        if 'title' in yaml_data:
+            add_title(yaml_data['title'])
         plt.savefig(filename, format=file_extension)
         plt.show()
         return 0

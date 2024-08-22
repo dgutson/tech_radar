@@ -1,4 +1,9 @@
 ---
+title:
+  caption: Hello
+  color: red
+  fontsize: 17
+
 quadrants:
   - LLM / GenAI
   - Analysis Tools
