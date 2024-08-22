@@ -44,6 +44,8 @@ Then run
 tech-radar --input-yaml example.yml --output example.svg
 ```
 
+Run with `--help` for further options.
+
 ![Generated image](example.svg)
 
 ## Yaml details:
